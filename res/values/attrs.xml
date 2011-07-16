@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="TagView">
+        <attr name="background" format="reference|color" />
+        <attr name="border" format="reference|color" />
+    </declare-styleable>
+</resources>

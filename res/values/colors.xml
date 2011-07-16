@@ -1,0 +1,4 @@
+<resources>
+    <color name="tagBorderDefault">#000000</color>
+    <color name="tagBackgroundDefault">#ffffff</color>
+</resources>
