@@ -7,8 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * Based on PredicateLayout by Henrik Gustafsson
+ * @see http://stackoverflow.com/questions/549451/line-breaking-widget-layout-for-android
+ * @license http://creativecommons.org/licenses/by-sa/2.5/
+ */
 public class TagListView extends ViewGroup {
 
     private int line_height;
