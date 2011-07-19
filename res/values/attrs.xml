@@ -3,4 +3,8 @@
         <attr name="background" format="reference|color" />
         <attr name="border" format="reference|color" />
     </declare-styleable>
+    <declare-styleable name="TagListView">
+    	<attr name="vertical_spacing" format="dimension" />
+    	<attr name="horizontal_spacing" format="dimension" />
+    </declare-styleable>
 </resources>

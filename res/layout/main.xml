@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:taglist="http://schemas.android.com/apk/res/org.codeandmagic.android"
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
@@ -15,7 +16,9 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:background="#fff"
-		android:padding="5dp" />
+		android:padding="5dp"
+		taglist:horizontal_spacing="3dp"
+		taglist:vertical_spacing="5dp" />
 
 </LinearLayout>
 
