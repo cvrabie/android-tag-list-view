@@ -3,9 +3,6 @@ package org.codeandmagic.android;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-
-import java.util.Arrays;
 
 public class TagListViewActivity extends Activity
 {

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <org.codeandmagic.android.TagView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tag="http://schemas.android.com/apk/res/org.codeandmagic.android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="0dp"
-        android:paddingTop="0dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColor="#000000"
-        android:textSize="10sp"
-        tag:background="#dee7f8"
-        tag:border="#a4bdec"
-        />
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tag="http://schemas.android.com/apk/res/org.codeandmagic.android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:paddingBottom="0dp"
+	android:paddingTop="0dp"
+	android:paddingLeft="10dp"
+	android:paddingRight="10dp"
+	android:textColor="#000000"
+	android:textSize="14sp"
+	tag:background="#dee7f8"
+	tag:border="#a4bdec" />

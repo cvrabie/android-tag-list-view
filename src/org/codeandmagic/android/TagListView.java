@@ -1,12 +1,12 @@
 package org.codeandmagic.android;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.ArrayList;
 
 /**
  * Based on PredicateLayout by Henrik Gustafsson
@@ -15,42 +15,42 @@ import java.util.ArrayList;
  */
 public class TagListView extends ViewGroup {
 
-    private int line_height;
-    private ArrayList<String> tags = new ArrayList<String>();
-    private LayoutInflater inflater;
+    private int mLineHeight;
+    private final ArrayList<String> mTags = new ArrayList<String>();
+    private final LayoutInflater mInflater;
 
     public static class LayoutParams extends ViewGroup.LayoutParams {
-        public final int horizontal_spacing;
-        public final int vertical_spacing;
+        public final int mHorizontalSpacing;
+        public final int mVerticalSpacing;
 
         /**
-         * @param horizontal_spacing Pixels between items, horizontally
-         * @param vertical_spacing Pixels between items, vertically
+         * @param horizontalSpacing Pixels between items, horizontally
+         * @param verticalSpacing Pixels between items, vertically
          */
-        public LayoutParams(int horizontal_spacing, int vertical_spacing) {
+		public LayoutParams(int horizontalSpacing, int verticalSpacing) {
             super(0, 0);
-            this.horizontal_spacing = horizontal_spacing;
-            this.vertical_spacing = vertical_spacing;
+            this.mHorizontalSpacing = horizontalSpacing;
+            this.mVerticalSpacing = verticalSpacing;
         }
     }
 
     public TagListView(Context context) {
         super(context);
-        inflater = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(context);
     }
 
     public TagListView(Context context, AttributeSet attrs){
         super(context, attrs);
-        inflater = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(context);
     }
 
     public void addTag(String tag){
-        tags.add(tag);
+        mTags.add(tag);
         inflateTagView(tag);
     }
 
     private void inflateTagView(String tag) {
-        TagView tagView = (TagView) inflater.inflate(R.layout.tag, null);
+        TagView tagView = (TagView) mInflater.inflate(R.layout.tag, null);
         tagView.setText(tag);
         addView(tagView);
     }
@@ -77,17 +77,17 @@ public class TagListView extends ViewGroup {
                         MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
 
                 final int childw = child.getMeasuredWidth();
-                line_height = Math.max(line_height, child.getMeasuredHeight() + lp.vertical_spacing);
+                line_height = Math.max(line_height, child.getMeasuredHeight() + lp.mVerticalSpacing);
 
                 if (xpos + childw > width) {
                     xpos = getPaddingLeft();
                     ypos += line_height;
                 }
 
-                xpos += childw + lp.horizontal_spacing;
+                xpos += childw + lp.mHorizontalSpacing;
             }
         }
-        this.line_height = line_height+3;
+		this.mLineHeight = line_height;
 
         if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.UNSPECIFIED){
             height = ypos + line_height;
@@ -102,7 +102,7 @@ public class TagListView extends ViewGroup {
 
     @Override
     protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
-        return new LayoutParams(1, 1); // default of 1px spacing
+		return new LayoutParams(1, 5); // default of 1px spacing
     }
 
     @Override
@@ -127,10 +127,10 @@ public class TagListView extends ViewGroup {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 if (xpos + childw > width) {
                     xpos = getPaddingLeft();
-                    ypos += line_height;
+                    ypos += mLineHeight;
                 }
                 child.layout(xpos, ypos, xpos + childw, ypos + childh);
-                xpos += childw + lp.horizontal_spacing;
+                xpos += childw + lp.mHorizontalSpacing;
             }
         }
     }

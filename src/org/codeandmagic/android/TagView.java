@@ -7,16 +7,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
 
 public class TagView extends TextView {
-    private final static String T = "tagview";
+	public final static String T = "tagview";
 
-    private int tagBackground;
-    private int tagBorder;
-    private Paint backgroundPaint;
-    private Paint borderPaint;
+    private int mTagBackground;
+    private int mTagBorder;
+    private Paint mBackgroundPaint;
+	private Paint mBorderPaint;
 
     public TagView(Context context) {
         super(context);
@@ -46,17 +45,17 @@ public class TagView extends TextView {
 
     private void init(Context context, AttributeSet attrs){
         final TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.TagView);
-        tagBackground = parseColor(context, a, R.styleable.TagView_background, R.color.tagBackgroundDefault);
-        tagBorder = parseColor(context, a, R.styleable.TagView_border, R.color.tagBorderDefault);
+        mTagBackground = parseColor(context, a, R.styleable.TagView_background, R.color.tagBackgroundDefault);
+        mTagBorder = parseColor(context, a, R.styleable.TagView_border, R.color.tagBorderDefault);
         a.recycle();
 
-        backgroundPaint = backgroundPaint();
-        borderPaint = borderPaint();
+        mBackgroundPaint = backgroundPaint();
+        mBorderPaint = borderPaint();
     }
 
     private Paint backgroundPaint() {
         Paint p = new Paint();
-        p.setColor(tagBackground);
+        p.setColor(mTagBackground);
         p.setAntiAlias(true);
         p.setFilterBitmap(true);
         p.setDither(true);
@@ -65,7 +64,7 @@ public class TagView extends TextView {
 
     private Paint borderPaint(){
         Paint p = new Paint();
-        p.setColor(tagBorder);
+        p.setColor(mTagBorder);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(1);
         p.setAntiAlias(true);
@@ -81,8 +80,8 @@ public class TagView extends TextView {
         final int height = getHeight();
         final int roundness = height/2;
 
-        canvas.drawRoundRect(new RectF(push, 0, width, height), roundness, roundness, backgroundPaint);
-        canvas.drawRoundRect(new RectF(push, 0, width, height), roundness, roundness, borderPaint);
+        canvas.drawRoundRect(new RectF(push, 0, width, height), roundness, roundness, mBackgroundPaint);
+        canvas.drawRoundRect(new RectF(push, 0, width, height), roundness, roundness, mBorderPaint);
         super.onDraw(canvas);
     }
 }
