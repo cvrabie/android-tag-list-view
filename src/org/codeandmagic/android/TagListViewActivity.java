@@ -1,10 +1,12 @@
 package org.codeandmagic.android;
 
+import org.codeandmagic.android.TagListView.TagListener;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
-public class TagListViewActivity extends Activity
+public class TagListViewActivity extends Activity implements TagListener
 {
     /** Called when the activity is first created. */
     @Override
@@ -23,6 +25,16 @@ public class TagListViewActivity extends Activity
         tagListView.addTag("summer");
         tagListView.addTag("lorem ipsum dolor");
 
-        Log.d("tagview", "started");
-    }
+		tagListView.addTagListener(this);
+	}
+
+	@Override
+	public void onAddedTag(String tag) {
+		Log.d("tagview", "added tag " + tag);
+	}
+
+	@Override
+	public void onRemovedTag(String tag) {
+		Log.d("tagview", "removed tag " + tag);
+	}
 }

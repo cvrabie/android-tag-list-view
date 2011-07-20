@@ -7,29 +7,46 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.widget.TextView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Transformation;
+import android.widget.EditText;
 
-public class TagView extends TextView {
+public class TagView extends EditText implements OnClickListener, AnimationListener {
 	public final static String T = "tagview";
 
-    private int mTagBackground;
-    private int mTagBorder;
-    private Paint mBackgroundPaint;
-	private Paint mBorderPaint;
+    private final int mTagBackground;
+    private final int mTagBorder;
+    private final Paint mBackgroundPaint;
+	private final Paint mBorderPaint;
+	
+	private boolean mSelectedForDelete = false;
 
     public TagView(Context context) {
-        super(context);
-        init(context, null);
+		this(context, null, 0);
     }
 
-    public TagView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
+	public TagView(Context context, AttributeSet attrs) {
+		this(context, attrs, 0);
     }
 
     public TagView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context, attrs);
+
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TagView);
+		mTagBackground = parseColor(context, a, R.styleable.TagView_background, R.color.tagBackgroundDefault);
+		mTagBorder = parseColor(context, a, R.styleable.TagView_border, R.color.tagBorderDefault);
+		a.recycle();
+
+		mBackgroundPaint = backgroundPaint();
+		mBorderPaint = borderPaint();
+
+		setCursorVisible(false);
+		setOnClickListener(this);
     }
 
     private int parseColor(final Context context, final TypedArray a, final int index, final int defaultColorRes){
@@ -41,16 +58,6 @@ public class TagView extends TextView {
         if(null != str) return Color.parseColor(str);
         //return default
         return context.getResources().getColor(defaultColorRes);
-    }
-
-    private void init(Context context, AttributeSet attrs){
-        final TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.TagView);
-        mTagBackground = parseColor(context, a, R.styleable.TagView_background, R.color.tagBackgroundDefault);
-        mTagBorder = parseColor(context, a, R.styleable.TagView_border, R.color.tagBorderDefault);
-        a.recycle();
-
-        mBackgroundPaint = backgroundPaint();
-        mBorderPaint = borderPaint();
     }
 
     private Paint backgroundPaint() {
@@ -84,4 +91,48 @@ public class TagView extends TextView {
         canvas.drawRoundRect(new RectF(push, 0, width, height), roundness, roundness, mBorderPaint);
         super.onDraw(canvas);
     }
+
+	@Override
+	public void onClick(View v) {
+
+		if (!mSelectedForDelete) {
+			mSelectedForDelete = true;
+
+			final int initialWidth = getMeasuredWidth();
+			final int increaseBy = 20;
+			final Animation resize = new Animation() {
+				@Override
+				protected void applyTransformation(float interpolatedTime, Transformation t) {
+					int newWidth = (int) (increaseBy * interpolatedTime) + initialWidth;
+					setWidth(newWidth);
+				}
+
+				@Override
+				public boolean willChangeBounds() {
+					return true;
+				}
+			};
+
+			resize.setDuration(300);
+			resize.setFillAfter(true);
+			resize.setInterpolator(new BounceInterpolator());
+			resize.setAnimationListener(this);
+			startAnimation(resize);
+		}
+		else {
+			ViewGroup parent = (ViewGroup) getParent();
+			parent.removeView(this);
+		}
+	}
+
+	@Override
+	public void onAnimationEnd(Animation animation) {
+
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation animation) {}
+
+	@Override
+	public void onAnimationStart(Animation animation) {}
 }

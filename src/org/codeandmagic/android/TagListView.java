@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.OnHierarchyChangeListener;
 
 /**
  * Based on PredicateLayout by Henrik Gustafsson
@@ -17,11 +18,12 @@ import android.view.ViewGroup;
  *      -android
  * @license http://creativecommons.org/licenses/by-sa/2.5/
  */
-public class TagListView extends ViewGroup {
+public class TagListView extends ViewGroup implements OnHierarchyChangeListener {
 
 	private int mLineHeight;
 	private final int mHorizontalSpacing;
 	private final int mVerticalSpacing;
+	private final ArrayList<TagListener> mListeners;
 
 	private final ArrayList<String> mTags = new ArrayList<String>();
 	private final LayoutInflater mInflater;
@@ -43,6 +45,12 @@ public class TagListView extends ViewGroup {
 		}
 	}
 
+	public static interface TagListener {
+		void onAddedTag(String tag);
+
+		void onRemovedTag(String tag);
+	}
+
 	public TagListView(Context context) {
 		this(context, null, 0);
 	}
@@ -59,6 +67,19 @@ public class TagListView extends ViewGroup {
 		mHorizontalSpacing = a.getDimensionPixelSize(R.styleable.TagListView_horizontal_spacing, 1);
 		mVerticalSpacing = a.getDimensionPixelSize(R.styleable.TagListView_vertical_spacing, 1);
 		a.recycle();
+
+		mListeners = new ArrayList<TagListener>();
+		setOnHierarchyChangeListener(this);
+	}
+
+	public void addTagListener(TagListener listener) {
+		if (!mListeners.contains(listener)) {
+			mListeners.add(listener);
+		}
+	}
+
+	public void removeTagListener(TagListener listener) {
+		mListeners.remove(listener);
 	}
 
 	public void addTag(String tag) {
@@ -79,7 +100,7 @@ public class TagListView extends ViewGroup {
 		final int width = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
 		int height = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
 		final int count = getChildCount();
-		int line_height = 0;
+		int lineHeight = 0;
 
 		int xpos = getPaddingLeft();
 		int ypos = getPaddingTop();
@@ -91,25 +112,26 @@ public class TagListView extends ViewGroup {
 				child.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST),
 						MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
 
-				final int childw = child.getMeasuredWidth();
-				line_height = Math.max(line_height, child.getMeasuredHeight() + lp.mVerticalSpacing);
+				final int childWidth = child.getMeasuredWidth();
+				lineHeight = Math.max(lineHeight, child.getMeasuredHeight() + lp.mVerticalSpacing);
 
-				if (xpos + childw > width) {
+				if (xpos + childWidth > width) {
 					xpos = getPaddingLeft();
-					ypos += line_height;
+					ypos += lineHeight;
 				}
 
-				xpos += childw + lp.mHorizontalSpacing;
+				xpos += childWidth + lp.mHorizontalSpacing;
 			}
 		}
-		this.mLineHeight = line_height;
+		this.mLineHeight = lineHeight;
 
 		if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.UNSPECIFIED) {
-			height = ypos + line_height;
+			height = ypos + lineHeight;
 
-		} else if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
-			if (ypos + line_height < height) {
-				height = ypos + line_height;
+		}
+		else if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
+			if (ypos + lineHeight < height) {
+				height = ypos + lineHeight;
 			}
 		}
 		setMeasuredDimension(width, height);
@@ -122,8 +144,7 @@ public class TagListView extends ViewGroup {
 
 	@Override
 	protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-		if (p instanceof LayoutParams)
-			return true;
+		if (p instanceof LayoutParams) return true;
 		return false;
 	}
 
@@ -137,15 +158,39 @@ public class TagListView extends ViewGroup {
 		for (int i = 0; i < count; i++) {
 			final View child = getChildAt(i);
 			if (child.getVisibility() != GONE) {
-				final int childw = child.getMeasuredWidth();
-				final int childh = child.getMeasuredHeight();
+				final int childWidth = child.getMeasuredWidth();
+				final int childHeight = child.getMeasuredHeight();
 				final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-				if (xpos + childw > width) {
+				if (xpos + childWidth > width) {
 					xpos = getPaddingLeft();
 					ypos += mLineHeight;
 				}
-				child.layout(xpos, ypos, xpos + childw, ypos + childh);
-				xpos += childw + lp.mHorizontalSpacing;
+				child.layout(xpos, ypos, xpos + childWidth, ypos + childHeight);
+				xpos += childWidth + lp.mHorizontalSpacing;
+			}
+		}
+	}
+
+
+
+	@Override
+	public void onChildViewAdded(View parent, View child) {
+		if (child instanceof TagView) {
+			TagView tagView = (TagView) child;
+
+			for (TagListener listener : mListeners) {
+				listener.onAddedTag(tagView.getText().toString());
+			}
+		}
+	}
+
+	@Override
+	public void onChildViewRemoved(View parent, View child) {
+		if (child instanceof TagView) {
+			TagView tagView = (TagView) child;
+
+			for (TagListener listener : mListeners) {
+				listener.onRemovedTag(tagView.getText().toString());
 			}
 		}
 	}
